@@ -58,15 +58,6 @@ namespace ExtractParameterObject
             var newDocument = currentProject.AddDocument(classFileName, sourceText, document.Folders);
             newDocument = await RemoveUnusedImportDirectivesAsync(newDocument, cancellationToken);
 
-
-            //await UpdateOriginalMethodAsync(document, methodDeclarationSyntax, cancellationToken);
-
-
-            //methodDeclarationSyntax = 
-            //    SyntaxFactory.MethodDeclaration(methodDeclarationSyntax.ReturnType, methodDeclarationSyntax.Identifier)
-            //        .AddParameterListParameters(SyntaxFactory.Parameter(SyntaxFactory.Identifier("oParameterObject"))
-            //            .WithType(SyntaxFactory.ParseName(className)));
-
             return newDocument.Project.Solution;
         }
 
@@ -75,24 +66,6 @@ namespace ExtractParameterObject
             SyntaxNode documentRootNode = await document.GetSyntaxRootAsync(cancellationToken);
             var members = documentRootNode.DescendantNodes().OfType<MethodDeclarationSyntax>();
             var matchingMember = members.First(m => m.Identifier.Equals(methodDeclarationSyntax.Identifier));
-
-            //System.Diagnostics.Debugger.Break();
-
-            //foreach (var item in members.Where(m => m is MethodDeclarationSyntax))
-            //{
-            //    MethodDeclarationSyntax methodDeclaration = item as MethodDeclarationSyntax;
-
-            //    if (methodDeclaration.Identifier.Equals(methodDeclarationSyntax.Identifier))
-            //    {
-            //        documentRootNode.RemoveNode(methodDeclaration, SyntaxRemoveOptions.KeepTrailingTrivia);
-
-            //        //methodDeclaration.rem=
-            //        //    SyntaxFactory.MethodDeclaration(methodDeclarationSyntax.ReturnType, methodDeclarationSyntax.Identifier)
-            //        //        .AddParameterListParameters(SyntaxFactory.Parameter(SyntaxFactory.Identifier("oParameterObject"))
-            //        //            .WithType(SyntaxFactory.ParseName(className)));
-            //    }
-            //}
-        
         }
 
 
