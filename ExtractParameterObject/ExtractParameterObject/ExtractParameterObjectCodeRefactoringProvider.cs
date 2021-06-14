@@ -32,10 +32,10 @@ namespace ExtractParameterObject
             }
 
             // For any type declaration node, create a code action to reverse the identifier text.
-            var action = 
+            var action =
                 CodeAction.Create(
-                    "Extract Parameter Object", 
-                    cancellationToken => 
+                    "Extract Parameter Object",
+                    cancellationToken =>
                         ExtractParameterObjectAsync(context.Document, methodDecl, cancellationToken));
 
             // Register this code action.
@@ -72,6 +72,7 @@ namespace ExtractParameterObject
         private string GetParameterObjectContents(string className, ParameterListSyntax parameterList, string assemblyName)
         {
             MemberDeclarationSyntax[] aoProperties = GetProperties(parameterList);
+            ConstructorDeclarationSyntax oConstructorDeclaration = GetConstructor(className);
 
             var comp = SyntaxFactory.CompilationUnit()
                 .AddMembers(
@@ -79,15 +80,18 @@ namespace ExtractParameterObject
                             .AddMembers(
                             SyntaxFactory.ClassDeclaration(className)
                                 .AddMembers(aoProperties)
-                                .AddMembers(
-                                    SyntaxFactory.ConstructorDeclaration(className)
-                                            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
-                                            .WithBody(SyntaxFactory.Block())
-                                    )
-                            )
-            ).NormalizeWhitespace();
+                                .AddMembers(oConstructorDeclaration)))
+                .NormalizeWhitespace();
 
             return comp.ToFullString();
+        }
+
+        private static ConstructorDeclarationSyntax GetConstructor(string className)
+        {
+            return
+                SyntaxFactory.ConstructorDeclaration(className)
+                        .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                        .WithBody(SyntaxFactory.Block());
         }
 
         private static MemberDeclarationSyntax[] GetProperties(ParameterListSyntax parameterList)
